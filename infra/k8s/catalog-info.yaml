@@ -1,0 +1,28 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: flex-maestro
+  description: "Repository created by Backstage"
+  annotations:
+    buildkite.com/project-slug: twilio/twilio-internal-flex-maestro
+    jira/project-key: ${jiraKey}
+    pagerduty.com/service-id: flex-maestro
+    twilio.com/email: example@twilio.com
+    twilio.com/ldap-group: dw20-team
+    twilio.com/security-tier: green
+    twilio.com/service-tier: t5
+    twilio.com/slack-channel-name: team-flexperience
+
+  links:
+    - url: "https://www.github.com/twilio-internal/flex-maestro"
+      title: "Application Repository"
+    - url: "https://www.github.com/twilio-internal/flex-maestro-deploy"
+      title: "Deployment Repository"
+    - url: "https://www.buildkite.com/twilio/twilio-internal-flex-maestro"
+      title: "Buildkite Pipeline"
+spec:
+  type: service
+  lifecycle: experimental
+  owner: group:team_otk-migration-assistance
+  system: system:default/system_platform-product-demo

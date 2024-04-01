@@ -1,0 +1,23 @@
+environment: dev
+realm: dev-us1
+
+image:
+  repository: flex-maestro
+  tag: flex-maestro-tag
+
+nameOverride: ""
+
+# A PDB limits the number of Pods of a replicated application that are down simultaneously 
+# from voluntary disruptions. For example, a web front end might want to ensure that the 
+# number of replicas serving load never falls below a certain percentage of the total.
+#
+# This also enables cluster operators to drain and remove hosts from service without
+# affecting the availability of an application or having to coordinate with application
+# teams.
+#
+# Ref: https://kubernetes.io/docs/concepts/workloads/pods/disruptions/
+# Ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+podDisruptionBudget:
+  # kubernetes rounds up the percentage to the next integer, if you have 7
+  # pods and set maxUnavailable to 50% it will round up to 4 pods
+  maxUnavailable: "25%"

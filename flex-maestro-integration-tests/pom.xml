@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>flex-maestro</artifactId>
+        <groupId>com.twilio.flexmaestro</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>flex-maestro-integration-tests</artifactId>
+    <name>${project.artifactId}</name>
+
+    <properties>
+        <openapi.library>client</openapi.library>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <artifactId>flex-maestro-server</artifactId>
+            <groupId>com.twilio.flexmaestro</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>flex-maestro-server</artifactId>
+            <groupId>com.twilio.flexmaestro</groupId>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.twilio</groupId>
+            <artifactId>dropwizard4-chassi-test-dependencies</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.twilio</groupId>
+            <artifactId>twilio-test-library</artifactId>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!-- Profile to run integration tests if generated from archetype -->
+        <profile>
+            <id>run-docker-tests</id>
+            <activation>
+                <file><exists>${basedir}\..\Dockerfile</exists></file>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>3.1.2</version>
+                        <configuration>
+                            <systemProperties>
+                                <container.test>true</container.test>
+                            </systemProperties>
+                            <environmentVariables>
+                                <HEALTH_CHECK_PATH>healthcheck</HEALTH_CHECK_PATH>
+                                <HOST_SID>${testenv.HOST_SID}</HOST_SID>
+                                <TWILIO_REALM>${testenv.TWILIO_REALM}</TWILIO_REALM>
+                                <TWILIO_ENVIRONMENT>${testenv.TWILIO_ENVIRONMENT}</TWILIO_ENVIRONMENT>
+                                <APP_PORT>${testenv.APP_PORT}</APP_PORT>
+                                <ADMIN_PORT>${testenv.ADMIN_PORT}</ADMIN_PORT>
+                                <SERVICE_NAME>dw4-example</SERVICE_NAME>
+                                <DOCKER_COMPOSE_YML>${basedir}/../docker-compose.yml</DOCKER_COMPOSE_YML>
+                                <ROLLBAR_ENABLED>${testenv.ROLLBAR_ENABLED}</ROLLBAR_ENABLED>
+                                <API_AUTH_ENABLED>${testenv.API_AUTH_ENABLED}</API_AUTH_ENABLED>
+                                <HOST_AUTH_ENABLED>${testenv.HOST_AUTH_ENABLED}</HOST_AUTH_ENABLED>
+                                <SECRET_ROLLBAR_API_KEY>${testenv.SECRET_ROLLBAR_API_KEY}</SECRET_ROLLBAR_API_KEY>
+                                <SECRET_DATADOG_API_KEY>${testenv.SECRET_DATADOG_API_KEY}</SECRET_DATADOG_API_KEY>
+                            </environmentVariables>
+                            <useFile>false</useFile>
+                            <includes>
+                                <include>**/*IT.java</include>
+                            </includes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>docker-tests</id>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <testResources>
+            <testResource>
+                <includes>
+                    <include>service.yaml</include>
+                </includes>
+                <directory>${project.basedir}/../conf</directory>
+                <filtering>true</filtering>
+            </testResource>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-service-routes</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <library>${openapi.library}</library>
+                            <inputSpec>${project.basedir}/../flex-maestro-server/src/main/resources/openapi/openapi-spec.yaml</inputSpec>
+                            <apiPackage>com.twilio.flexmaestro.client.api</apiPackage>
+                            <modelPackage>com.twilio.flexmaestro.client.definitions</modelPackage>
+                            <configOptions>
+                                <isJakarta>true</isJakarta>
+                                <useOptional>false</useOptional>
+                                <useCallBuilderHeader>true</useCallBuilderHeader>
+                                <handleApiException>false</handleApiException>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <HOST_SID>${testenv.HOST_SID}</HOST_SID>
+                        <TWILIO_REALM>${testenv.TWILIO_REALM}</TWILIO_REALM>
+                        <TWILIO_ENVIRONMENT>${testenv.TWILIO_ENVIRONMENT}</TWILIO_ENVIRONMENT>
+                        <APP_PORT>${testenv.APP_PORT}</APP_PORT>
+                        <ADMIN_PORT>${testenv.ADMIN_PORT}</ADMIN_PORT>
+                        <ROLLBAR_ENABLED>${testenv.ROLLBAR_ENABLED}</ROLLBAR_ENABLED>
+                        <API_AUTH_ENABLED>${testenv.API_AUTH_ENABLED}</API_AUTH_ENABLED>
+                        <HOST_AUTH_ENABLED>${testenv.HOST_AUTH_ENABLED}</HOST_AUTH_ENABLED>
+                        <SECRET_ROLLBAR_API_KEY>${testenv.SECRET_ROLLBAR_API_KEY}</SECRET_ROLLBAR_API_KEY>
+                        <SECRET_DATADOG_API_KEY>${testenv.SECRET_DATADOG_API_KEY}</SECRET_DATADOG_API_KEY>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

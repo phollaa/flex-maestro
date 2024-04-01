@@ -1,0 +1,44 @@
+# plugin version numbers in this demo may not reflect the latest available versions
+- label: ":package: Build and deploy maven artifacts :maven: :sonarqube: :rocket:"
+  key: maven-build-branch
+  plugins:
+    - ssh://git@code.hq.twilio.com/twilio/maven-buildkite-plugin.git#${TWILIO_MAVEN_PLUGIN_VERSION}:
+        maven_args: -T 1C -U clean deploy sonar:sonar -Pcoverage -DskipITs -DdeployAtEnd=true
+  artifact_paths:
+    - "flex-maestro/target/flex-maestro.jar"
+- label: ":docker: build"
+  key: docker-build
+  depends_on:
+    - maven-build-branch
+  command: docker build -t flex-maestro --file Dockerfile .
+  plugins:
+    - artifacts#${BK_ARTIFACTS_PLUGIN_VERSION}:
+        download:
+          - "flex-maestro/target/flex-maestro.jar"
+    - twilio-internal/container-registry#v1.2.1:
+        image:
+          docker: flex-maestro
+- label: "Render deployment manifest for dev"
+  key: deploy-dev
+  depends_on: docker-build
+  agents:
+    queue: otk-manifest-renderer
+  plugins:
+    - ecr#v2.7.0:
+        login: true
+        account_ids: "018537234677"
+        region: "us-east-1"
+    - twilio-internal/render-manifests#v0.0.29:
+        gitops_repo: git@github.com:twilio-internal/flex-maestro-deploy.git
+        render:
+          - helm:
+              source: chart
+              destination: environments/dev/us-east-1
+              values_files:
+                - values.yaml
+              release_name: flex-maestro
+              set_values:
+                - key: "image.tag"
+                  value: "$(buildkite-agent meta-data get container-images/v2/flex-maestro/us-east-1/tag)"
+                - key: "image.repository"
+                  value: "$(buildkite-agent meta-data get container-images/v2/flex-maestro/us-east-1/repository)"

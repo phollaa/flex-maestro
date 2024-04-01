@@ -1,0 +1,447 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.openapitools</groupId>
+  <artifactId></artifactId>
+  <packaging>jar</packaging>
+  <name></name>
+  <version>1.0.0</version>
+
+  <properties>
+    
+    <!-- Env vars for test config -->
+    <testenv.HOST_SID>HO00000000000000000000000000000000</testenv.HOST_SID>
+    <testenv.TWILIO_REALM>local</testenv.TWILIO_REALM>
+    <testenv.TWILIO_ENVIRONMENT>local</testenv.TWILIO_ENVIRONMENT>
+    <testenv.APP_PORT>9876</testenv.APP_PORT>
+    <testenv.ADMIN_PORT>8765</testenv.ADMIN_PORT>
+    <testenv.ROLLBAR_ENABLED>false</testenv.ROLLBAR_ENABLED>
+    <testenv.API_AUTH_ENABLED>true</testenv.API_AUTH_ENABLED>
+    <testenv.HOST_AUTH_ENABLED>false</testenv.HOST_AUTH_ENABLED>
+    <testenv.SECRET_ROLLBAR_API_KEY>${project.basedir}/../conf/secrets/rollbar-api-key.txt</testenv.SECRET_ROLLBAR_API_KEY>
+    <testenv.SECRET_DATADOG_API_KEY>${project.basedir}/../conf/secrets/datadog-api-key.txt</testenv.SECRET_DATADOG_API_KEY>
+  </properties>
+
+  <dependencyManagement>
+  <dependencies>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Thirdparty -->
+
+    <!-- https://www.dropwizard.io/1.3.5/docs/ -->
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate.validator</groupId>
+          <artifactId>hibernate-validator</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-forms</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-configuration</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-json-logging</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vavr</groupId>
+      <artifactId>vavr</artifactId>
+    </dependency>
+
+    <!-- FasterXml Jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+
+        <dependency>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+        </dependency>
+
+
+    <!-- SLF4J for Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <!-- JavaX validation API -->
+    <!--
+        USE this in favor of IntelliJ Annotations.
+    -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <!-- Figure why this is used ¯\_(ツ)_/¯ -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+    </dependency>
+
+    <!-- TWILIO -->
+
+    <!-- https://code.hq.twilio.com/twilio/coreutil -->
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-sids</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-jersey3</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-servlets</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-json</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-errors</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-opentracing</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-jersey3-metrics</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-service-api-jakarta</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-service-configuration</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>coreutil-service-dw40</artifactId>
+    </dependency>
+
+
+    <!-- https://code.hq.twilio.com/twilio/core-bundles -->
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>core-configuration-bundle</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>core-metrics-bundle-jakarta</artifactId>
+    </dependency>
+    <dependency>
+       <groupId>com.twilio</groupId>
+       <artifactId>core-object-mapper-bundle-jakarta</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>core-servlets-bundle-jakarta</artifactId>
+    </dependency>
+
+    <!-- https://code.hq.twilio.com/twilio/twilio-rollbar-java -->
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>twilio-rollbar-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>twilio-rollbar-dw10</artifactId>
+    </dependency>
+
+    <!-- https://code.hq.twilio.com/twilio/twilio-dropwizard/tree/master/twilio-dropwizard-13 -->
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>twilio-dropwizard-13-auth</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>twilio-dropwizard-13-exceptions</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>twilio-dropwizard-13-metrics</artifactId>
+    </dependency>
+
+    <!-- https://code.hq.twilio.com/twilio/core-service -->
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>core-service-jersey2</artifactId>
+    </dependency>
+
+    <!-- https://code.hq.twilio.com/twilio/platformlib -->
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>platformlib-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>platformlib-metrics-3</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Swagger dependencies -->
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>dropwizard-swagger-ui-bundle</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jersey2-jaxrs</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.twilio</groupId>
+      <artifactId>core-rate-limit-bundle</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jvnet.mimepull</groupId>
+          <artifactId>mimepull</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Testing dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-testing</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <testResources>
+      <testResource>
+        <includes>
+          <include>service.yml</include>
+        </includes>
+        <directory>${project.basedir}/../conf</directory>
+        <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <parameters>true</parameters>
+          
+        </configuration>
+      </plugin>
+
+      
+
+      <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+
+        <executions>
+          <execution>
+            <id>generate-service-routes</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorName>com.twilio.codegen.TwilioGenerator</generatorName>
+              <library>dropwizard</library>
+              <inputSpec>${project.basedir}/src/main/resources/openapi/openapi-spec.yaml</inputSpec>
+              <apiPackage>com.twilio.flexmaestro.server.api</apiPackage>
+              <modelPackage>com.twilio.flexmaestro.server.definitions</modelPackage>
+              <configOptions>
+                <parentOverridden>true</parentOverridden>
+                <parentArtifactId>twilio-dropwizard-pom</parentArtifactId>
+                <parentGroupId>com.twilio</parentGroupId>
+                <parentVersion>${project.version}</parentVersion>
+                <apiFirst>true</apiFirst>
+                <model>true</model>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+
+        <configuration>
+          <failIfNoTests>true</failIfNoTests>
+          <includes>
+            <include>**/*Suite.java</include>
+            <include>**/*Test.java</include>
+          </includes>
+          <systemPropertyVariables>
+            <jersey.config.test.container.port>0</jersey.config.test.container.port>
+          </systemPropertyVariables>
+          <environmentVariables>
+            <HOST_SID>${testenv.HOST_SID}</HOST_SID>
+            <TWILIO_REALM>${testenv.TWILIO_REALM}</TWILIO_REALM>
+            <TWILIO_ENVIRONMENT>${testenv.TWILIO_ENVIRONMENT}</TWILIO_ENVIRONMENT>
+            <APP_PORT>${testenv.APP_PORT}</APP_PORT>
+            <ADMIN_PORT>${testenv.ADMIN_PORT}</ADMIN_PORT>
+            <ROLLBAR_ENABLED>${testenv.ROLLBAR_ENABLED}</ROLLBAR_ENABLED>
+            <API_AUTH_ENABLED>${testenv.API_AUTH_ENABLED}</API_AUTH_ENABLED>
+            <HOST_AUTH_ENABLED>${testenv.HOST_AUTH_ENABLED}</HOST_AUTH_ENABLED>
+            <SECRET_ROLLBAR_API_KEY>${testenv.SECRET_ROLLBAR_API_KEY}</SECRET_ROLLBAR_API_KEY>
+            <SECRET_DATADOG_API_KEY>${testenv.SECRET_DATADOG_API_KEY}</SECRET_DATADOG_API_KEY>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <configuration>
+          <createDependencyReducedPom>true</createDependencyReducedPom>
+          <filters>
+            <filter>
+              <artifact>*:*</artifact>
+              <excludes>
+                <exclude>META-INF/*.SF</exclude>
+                <exclude>META-INF/*.DSA</exclude>
+                <exclude>META-INF/*.RSA</exclude>
+              </excludes>
+            </filter>
+          </filters>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <finalName>${project.artifactId}</finalName>
+              <transformers>
+                <transformer implementation='org.apache.maven.plugins.shade.resource.ServicesResourceTransformer'/>
+                <transformer implementation='org.apache.maven.plugins.shade.resource.ManifestResourceTransformer'>
+                  <mainClass>com.twilio.flexmaestro.server.application.DropwizardExampleApplication</mainClass>
+                </transformer>
+                <transformer implementation='org.apache.maven.plugins.shade.resource.IncludeResourceTransformer'>
+                  <resource>META-INF/banner.txt</resource>
+                  <file>banner.txt</file>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.basepom.maven</groupId>
+        <artifactId>duplicate-finder-maven-plugin</artifactId>
+      </plugin>
+
+      
+
+    </plugins>
+  </build>
+</project>

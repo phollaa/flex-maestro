@@ -1,0 +1,4 @@
+apiPackage: com.twilio.flexmaestro.server.api
+modelPackage: com.twilio.flexmaestro.server.definitions
+interfaceOnly: true
+library: dropwizard

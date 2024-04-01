@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "chart.name" . }}
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+  annotations:
+    kubernetes.twilio.com/flex-maestro: {{ include "chart.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "chart.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          env:
+            - name: APP_PORT
+              value: "19030"
+            - name: ADMIN_PORT
+              value: "8765"
+            - name: REALM
+              value: {{ .Values.realm }}
+            - name: ENVIRONMENT
+              value: {{ .Values.environment }}
+            - name: HOST_SID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8765
+            successThreshold: 1
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 1
+            failureThreshold: 3
+          ports:
+            - containerPort: 19030
+          resources: # for each pod
+            requests: # this is what I expect to reserve
+              memory: "256Mi"
+              cpu: "250m"
+            limits: # worst case
+              memory: "512Mi"
+              cpu: "500m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - all
+            privileged: false

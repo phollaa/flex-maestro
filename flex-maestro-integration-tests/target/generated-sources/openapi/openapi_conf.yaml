@@ -1,0 +1,4 @@
+apiPackage: com.twilio.flexmaestro.client.api
+modelPackage: com.twilio.flexmaestro.client.definitions
+interfaceOnly: true
+library: client
